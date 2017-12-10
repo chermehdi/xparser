@@ -4,10 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Paths;
 
 import static org.hamcrest.core.Is.is;
@@ -34,9 +31,16 @@ public class XParserTest {
 
     @Test
     public void marshal() {
+        Student s = new Student();
+        s.firstName = "mehdi";
+        s.lastName = "hello";
+        s.age = 32;
+        StringWriter sw = new StringWriter();
+        XParser.marshal(s, sw);
+        assertNotNull(sw);
     }
 
-    @After
+    @After  
     public void tearDown() throws Exception {
         reader.close();
     }

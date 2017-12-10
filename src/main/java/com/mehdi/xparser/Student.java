@@ -1,8 +1,10 @@
 package com.mehdi.xparser;
 
 import com.mehdi.xparser.annotations.Number;
+import com.mehdi.xparser.annotations.RootElement;
 import com.mehdi.xparser.annotations.Text;
 
+@RootElement
 public class Student {
 
     @Text

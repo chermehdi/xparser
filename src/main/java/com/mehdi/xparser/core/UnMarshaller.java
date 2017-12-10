@@ -1,7 +1,10 @@
 package com.mehdi.xparser.core;
 
+import com.mehdi.xparser.annotations.Number;
+import com.mehdi.xparser.annotations.Text;
+import com.mehdi.xparser.annotations.Typed;
+import com.mehdi.xparser.utils.ReflectionUtils;
 import com.mehdi.xparser.utils.XUtils;
-import com.sun.javaws.jnl.XMLUtils;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -40,17 +43,27 @@ public class UnMarshaller<T> {
             String childValue = childNode.getValue();
             field.setAccessible(true);
             // TODO: annotations to check the types of variable
-            if (field.getType() == String.class) {
-                field.set(object, childValue);
-            } else if (field.getType() == Integer.class) {
-                field.set(object, Integer.parseInt(childValue));
-            } else if (field.getType() == Long.class) {
-                field.set(object, Long.parseLong(childValue));
+            if (ReflectionUtils.isAnnotationPresent(field, Typed.class)) {
+                setFieldValue(object, field, childValue);
             } else {
-                // TODO: should be fixed to handle all kind of types
-                throw new RuntimeException("is not a valid type");
+                // assume it's text
+                field.set(object, childValue);
             }
             field.setAccessible(visibility);
+        }
+    }
+
+    private void setFieldValue(T object, Field field, String value) throws IllegalAccessException {
+        if (field.isAnnotationPresent(Number.class)) {
+            Number numberAnnotation = field.getAnnotation(Number.class);
+            if (numberAnnotation.isLong()) {
+                field.set(object, Long.parseLong(value));
+            } else {
+                field.set(object, Integer.parseInt(value));
+            }
+        }
+        if (field.isAnnotationPresent(Text.class)) {
+            field.set(object, value);
         }
     }
 }

@@ -1,8 +1,15 @@
 package com.mehdi.xparser;
 
+import com.mehdi.xparser.annotations.Number;
+import com.mehdi.xparser.annotations.Text;
+
 public class Student {
 
-    String firstName, lastName;
+    @Text
+    String firstName;
+    @Text
+    String lastName;
+    @Number
     Integer age;
 
     public Student() {

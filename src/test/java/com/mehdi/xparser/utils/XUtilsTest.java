@@ -25,6 +25,7 @@ public class XUtilsTest {
         assertThat(XUtils.getTagNameFromField(firstName), is("first-name"));
         assertThat(XUtils.getTagNameFromField(lastName), is("last-name"));
     }
+
     class StudentQualifierObject {
         String firstName;
         String lastName;

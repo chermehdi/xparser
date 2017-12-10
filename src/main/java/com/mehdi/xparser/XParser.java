@@ -1,5 +1,6 @@
 package com.mehdi.xparser;
 
+import com.mehdi.xparser.core.Marshaller;
 import com.mehdi.xparser.core.UnMarshaller;
 import com.mehdi.xparser.core.XNode;
 
@@ -30,14 +31,7 @@ public class XParser {
     public static <T> T unmarshal(Reader reader, Class<T> clazz) {
         InputStream is = null;
         try {
-
-            StringBuffer buffer = new StringBuffer();
-            char[] charBuffer = new char[DEFAULT_BUFFER_SIZE];
-            int pointer = 0;
-            while ((pointer = reader.read(charBuffer, 0, DEFAULT_BUFFER_SIZE)) != -1) {
-                buffer.append(charBuffer, 0, pointer);
-            }
-            is = new ByteArrayInputStream(buffer.toString().getBytes(StandardCharsets.UTF_8));
+            is = getInputStream(reader);
             UnMarshaller<T> unMarshaller = buildUnmarshaller(is, clazz);
             return unMarshaller.unmarshal();
         } catch (Exception e) {
@@ -46,6 +40,17 @@ public class XParser {
         } finally {
             closeStream(is);
         }
+    }
+
+    private static InputStream getInputStream(Reader reader) throws IOException {
+        StringBuffer buffer = new StringBuffer();
+        char[] charBuffer = new char[DEFAULT_BUFFER_SIZE];
+        int pointer = 0;
+        while ((pointer = reader.read(charBuffer, 0, DEFAULT_BUFFER_SIZE)) != -1) {
+            buffer.append(charBuffer, 0, pointer);
+        }
+        InputStream is = new ByteArrayInputStream(buffer.toString().getBytes(StandardCharsets.UTF_8));
+        return is;
     }
 
     private static void closeStream(InputStream is) {
@@ -62,11 +67,16 @@ public class XParser {
         return new UnMarshaller<>(root, clazz);
     }
 
+    private static <T> Marshaller buildMarshaller(T obj, Writer writer) {
+        return new Marshaller<>(obj, writer);
+    }
+
     /**
      * writes the Object to the Writer Object
      */
-    public static void marshal(Object obj, Writer writer) {
-
+    public static <T> void marshal(T obj, Writer writer) {
+        Marshaller marshaller = buildMarshaller(obj, writer);
+        marshaller.marshall();
     }
 
 }

@@ -36,11 +36,18 @@ public class XParserTest {
         s.lastName = "hello";
         s.age = 32;
         StringWriter sw = new StringWriter();
-        XParser.marshal(s, sw);
+        Address address = new Address();
+        address.name = "mehdi street";
+        address.number = 234;
+        Street st = new Street();
+        st.name = "mehdi wrapper";
+        st.address = address;
+        XParser.marshal(st, sw);
         assertNotNull(sw);
+        System.out.println(sw);
     }
 
-    @After  
+    @After
     public void tearDown() throws Exception {
         reader.close();
     }

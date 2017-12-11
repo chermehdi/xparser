@@ -9,6 +9,12 @@ import com.mehdi.xparser.utils.XUtils;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
+/**
+ * generic unmarshaller class for parsing xml documents into simple pojos
+ *
+ * @param <T> generic parameter of the class
+ * @author Mehdi_Maick
+ */
 public class UnMarshaller<T> {
 
     private Class<T> targetClazz;
@@ -35,6 +41,13 @@ public class UnMarshaller<T> {
         return null;
     }
 
+    /**
+     * fill the fields of the object from the XNode element
+     *
+     * @param object the object to be filled
+     * @param fields list of all declared fields of the target class
+     * @throws IllegalAccessException
+     */
     private void fillFields(T object, Field[] fields) throws IllegalAccessException {
         for (Field field : fields) {
             boolean visibility = field.isAccessible();
@@ -46,13 +59,22 @@ public class UnMarshaller<T> {
             if (ReflectionUtils.isAnnotationPresent(field, Typed.class)) {
                 setFieldValue(object, field, childValue);
             } else {
-                // assume it's text
+                // assumes it's text
                 field.set(object, childValue);
             }
             field.setAccessible(visibility);
         }
     }
 
+    /**
+     * sets a given field's value, it does it based on the annotation type, if the the field's not
+     * annotated with an @Typed, it treats it as simple String value
+     *
+     * @param object the target object
+     * @param field  the current treated field
+     * @param value  the current value of the field
+     * @throws IllegalAccessException
+     */
     private void setFieldValue(T object, Field field, String value) throws IllegalAccessException {
         if (field.isAnnotationPresent(Number.class)) {
             Number numberAnnotation = field.getAnnotation(Number.class);
